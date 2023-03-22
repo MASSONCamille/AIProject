@@ -19,11 +19,11 @@ class HexagonGridCanvas(tk.Canvas):
                 x_center, y_center = self.axial_to_pixel(q, r)
                 points = []
                 for i in range(6):
-                    angle_rad = math.pi / 3 * (i + 0.5)
+                    angle_rad = math.pi / 3 * (i + .5)
                     x = x_center + self.side_length * math.cos(angle_rad)
                     y = y_center + self.side_length * math.sin(angle_rad)
                     points.extend([x, y])
-                self.create_polygon(points, fill='blue')
+                self.create_polygon(points, fill='blue', outline='black', width=2)
 
 if __name__ == '__main__':
     root = tk.Tk()

@@ -21,7 +21,6 @@ class HexGrid:
 
     def initList(self) -> bool:
         if len(self.celllist) != 0:
-            print("test")
             return False
 
         if self.gtype is GridType.RECTANGLE:
