@@ -1,7 +1,7 @@
-import tkinter as tk
+from tkinter import *
 import math
 
-class HexagonGridCanvas(tk.Canvas):
+class HexagonGridCanvas(Canvas):
     def __init__(self, master, side_length=50, rows=5, cols=5, **kwargs):
         super().__init__(master, **kwargs)
         self.side_length = side_length
@@ -26,7 +26,7 @@ class HexagonGridCanvas(tk.Canvas):
                 self.create_polygon(points, fill='blue', outline='black', width=2)
 
 if __name__ == '__main__':
-    root = tk.Tk()
+    root = Tk()
     canvas = HexagonGridCanvas(root, side_length=30, rows=5, cols=5, width=500, height=500)
     canvas.pack()
 

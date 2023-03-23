@@ -2,9 +2,9 @@ from enum import Enum
 
 
 class CellType(Enum):
-    NEUTRAL_G = {"id": 1, "color": "#101010", "speed_coef": 1, "walkable": True}
-    FLOOD_G = {"id": 2, "color": "#0000FF", "speed_coef": 0, "walkable": False}
-    GRASS_G = {"id": 3, "color": "#00FF00", "speed_coef": 0.5, "walkable": True}
+    NEUTRAL_G = {"id": 1, "color": "#E0E0EE", "speed_coef": 1, "walkable": True}
+    FLOOD_G = {"id": 2, "color": "#6666CD", "speed_coef": 0, "walkable": False}
+    GRASS_G = {"id": 3, "color": "#069869", "speed_coef": 0.5, "walkable": True}
 
 
 class HexCell:
@@ -26,3 +26,9 @@ class HexCell:
 
     def getCostTime(self) -> float: # G function equivalent
         return 1. / self.ctype.value["speed_coef"]
+
+    def isWalkable(self) -> bool:
+        return self.ctype.value["walkable"]
+
+    def getColor(self) -> str:
+        return self.ctype.value["color"]
