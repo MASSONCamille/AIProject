@@ -4,6 +4,7 @@ from math import cos, sin, pi, sqrt
 
 from model.HexCell import HexCell
 from model.HexGrid import HexGrid
+from model.pathfinding.AstarNode import get_path_Astar
 
 
 class HexDraw(Canvas):
@@ -47,17 +48,18 @@ class HexDraw(Canvas):
         for cell in self.modele.celllist:
             self.itemconfigure(self.get_id_from_coord(cell.x, cell.y), fill=cell.getColor())
 
-        self.paint_cell_list(self.selected_cells, self._selected_color)
-        self.paint_cell_list(self.path_cells, self._path_color)
-
-        # test TODO: delete
+        self.path_cells = []
         if len(self.selected_cells) == 2:
-            print(
-                self.modele.get_cell_from_coord(**self.get_coord_from_id(self.selected_cells[0])).get_dist(
-                    self.modele.get_cell_from_coord(**self.get_coord_from_id(self.selected_cells[1]))
-                )
+            celllist = get_path_Astar(
+                grid=self.modele,
+                start=self.modele.get_cell_from_coord(**self.get_coord_from_id(self.selected_cells[0])),
+                objectif=self.modele.get_cell_from_coord(**self.get_coord_from_id(self.selected_cells[1])),
             )
-        # fin test
+            for cell in celllist:
+                self.path_cells.append(self.get_id_from_coord(cell.x, cell.y))
+
+        self.paint_cell_list(self.path_cells, self._path_color)
+        self.paint_cell_list(self.selected_cells, self._selected_color)
 
     def paint_cell_list(self, cells: list[int], color: str) -> None:
         for cell in cells:
@@ -133,10 +135,10 @@ class HexDraw(Canvas):
         self.resetColor()
 
         # test neighbour TODO: delete
-        # self.path_cells = []
-        # for i in self.modele.get_all_w_neighbours(**self.get_coord_from_id(clicked)):
-        #     print(i)
-        #     self.path_cells.append(self.get_id_from_coord(i.x, i.y))
-        # print()
-        #
-        # self.refresh()
+        self.path_cells = []
+        for i in self.modele.get_all_w_neighbours(HexCell(**self.get_coord_from_id(clicked))):
+            print(i)
+            self.path_cells.append(self.get_id_from_coord(i.x, i.y))
+        print()
+
+        self.refresh()
