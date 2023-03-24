@@ -50,6 +50,15 @@ class HexDraw(Canvas):
         self.paint_cell_list(self.selected_cells, self._selected_color)
         self.paint_cell_list(self.path_cells, self._path_color)
 
+        # test
+        if len(self.selected_cells) == 2:
+            print(
+                self.modele.get_cell_from_coord(**self.get_coord_from_id(self.selected_cells[0])).get_dist(
+                    self.modele.get_cell_from_coord(**self.get_coord_from_id(self.selected_cells[1]))
+                )
+            )
+        # fin test
+
     def paint_cell_list(self, cells: list[int], color: str) -> None:
         for cell in cells:
             self.itemconfigure(cell, fill=color)
@@ -110,8 +119,9 @@ class HexDraw(Canvas):
     def r_click(self, evt):  # right click
         clicked = int(self.find_closest(evt.x, evt.y)[0])
 
-        cell = self.modele.get_cell_from_coord(**(self.tag_to_coord(self.gettags(clicked)[0])))
-        cell.ctype = cell.ctype.get_next_cell_type()
+        if clicked not in self.selected_cells:
+            cell = self.modele.get_cell_from_coord(**(self.tag_to_coord(self.gettags(clicked)[0])))
+            cell.ctype = cell.ctype.get_next_cell_type()
 
         self.refresh()
 
@@ -121,3 +131,12 @@ class HexDraw(Canvas):
         print(self.modele.get_cell_from_coord(**(self.tag_to_coord(self.gettags(clicked)[0]))))
 
         self.resetColor()
+
+        # test neighbour
+        # self.path_cells = []
+        # for i in self.modele.get_all_w_neighbours(**self.get_coord_from_id(clicked)):
+        #     print(i)
+        #     self.path_cells.append(self.get_id_from_coord(i.x, i.y))
+        # print()
+        #
+        # self.refresh()

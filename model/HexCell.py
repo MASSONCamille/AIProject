@@ -36,7 +36,7 @@ class HexCell:
     def __str__(self) -> str:
         return "x:{x} | y:{y} | ground:{g}".format(x=self.x, y=self.y, g=self.ctype.name)
 
-    def getCostTime(self) -> float: # G function equivalent
+    def getCostTime(self) -> float:  # G function equivalent
         return 1. / self.ctype.value["speed_coef"]
 
     def isWalkable(self) -> bool:
@@ -44,3 +44,11 @@ class HexCell:
 
     def getColor(self) -> str:
         return self.ctype.value["color"]
+
+    def get_dist(self, cell) -> float:
+        cell: HexCell
+        return (
+                abs(self.x - cell.x)
+                + abs(self.x + self.y - cell.x - cell.y)
+                + abs(self.y - cell.y)
+        ) / 2

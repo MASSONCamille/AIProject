@@ -53,4 +53,25 @@ class HexGrid:
         return res
 
     def get_cell_from_coord(self, x: int, y: int) -> HexCell:
+        if HexCell(x, y) not in self.celllist:
+            return None
         return self.celllist[self.celllist.index(HexCell(x, y))]
+
+    def get_all_w_neighbours(self, x, y) -> list[HexCell]:
+        listres = []
+        lstcord = [
+            {"x": 0, "y": -1},
+            {"x": 1, "y": -1},
+            {"x": 1, "y": 0},
+            {"x": 0, "y": 1},
+            {"x": -1, "y": 1},
+            {"x": -1, "y": 0},
+        ]
+
+        for coord in lstcord:
+            neighbour = self.get_cell_from_coord(x+coord["x"], y+coord["y"])
+            if neighbour is not None:
+                if neighbour.isWalkable():
+                    listres.append(neighbour)
+
+        return listres
