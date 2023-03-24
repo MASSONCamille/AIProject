@@ -13,10 +13,10 @@ class HexGrid:
     default_gt = GridType.RHOMBUS
 
     def __init__(self, h: int, w: int, gtype: GridType = default_gt) -> None:
-        self.celllist: list[list[HexCell]] = []
         self.height: int = h
         self.width: int = w
         self.gtype: GridType = gtype
+        self.celllist: list[HexCell] = []
         self.initList()
 
     def initList(self) -> bool:
@@ -28,11 +28,9 @@ class HexGrid:
 
         elif self.gtype is GridType.RHOMBUS:
             for i in range(0, self.width):
-                celllist: list[HexCell] = []
                 for j in range(0, self.height):
                     cell: HexCell = HexCell(i, j)
-                    celllist.append(cell)
-                self.celllist.append(celllist)
+                    self.celllist.append(cell)
 
         elif self.gtype is GridType.HEXAGON:
             pass
@@ -53,3 +51,6 @@ class HexGrid:
             for c in sc:
                 res += "{c}\n".format(c=c)
         return res
+
+    def get_cell_from_coord(self, x: int, y: int) -> HexCell:
+        return self.celllist[self.celllist.index(HexCell(x, y))]

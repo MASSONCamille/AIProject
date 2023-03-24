@@ -1,3 +1,4 @@
+from datetime import time
 from tkinter import *
 from math import cos, sin, pi, sqrt
 
@@ -7,31 +8,60 @@ from model.HexGrid import HexGrid
 
 class HexDraw(Canvas):
     _tag_delimiter = ";"
+    _selected_color = "#6666CD"
+    _path_color = "#C64343"
 
-    def __init__(self, master, side_length=50, **kwargs) -> None:
+    def __init__(self, master, modele: HexGrid, side_length=25, **kwargs) -> None:
         super().__init__(master, **kwargs)
         self.side_l = side_length
+        self.modele = modele
 
-        self.bind("<Button-1>", self.__lclick)
-        self.bind("<Button-3>", self.__rclick)
+        self.is_init = False
+        self.selected_cells: list[int] = []
+        self.path_cells: list[int] = []
 
-    def __draw_hexcell(self, cell: HexCell) -> None:
-        self.create_polygon(
-            self.__hex_from_center_pt(**(self.__coord_grid_to_pixel_pt(cell.x, cell.y))),
-            fill=cell.getColor(),
-            outline='black',
-            width=1,
-            tags=self.__tag_from_coord(cell.x, cell.y),
-        )
+        self.bind("<Button-1>", self.l_click)
+        self.bind("<Button-2>", self.m_click)
+        self.bind("<Button-3>", self.r_click)
 
-    def init_draw_hexgrid(self, grid: HexGrid) -> None:
-        for celllist in grid.celllist:
-            for cell in celllist:
-                self.__draw_hexcell(cell)
+    def draw_hexgrid(self) -> None:
+        for cell in self.modele.celllist:
+            self.create_polygon(
+                self.hex_from_center_pt(**(self.coord_grid_to_pixel_pt(cell.x, cell.y))),
+                fill=cell.getColor(),
+                outline='black',
+                width=1,
+                tags=self.tag_from_coord(cell.x, cell.y),
+            )
 
-    def __coord_grid_to_pixel_pt(self, x: int, y: int) -> dict:
-        x_center = self.winfo_width() / 2
-        y_center = self.winfo_height() / 2
+    def resetColor(self) -> None:
+        self.selected_cells: list[HexCell] = []
+        self.path_cells: list[HexCell] = []
+        self.refresh()
+
+    def refresh(self) -> None:
+        if not self.is_init:
+            self.draw_hexgrid()
+            self.is_init = True
+
+        for cell in self.modele.celllist:
+            self.itemconfigure(self.get_id_from_coord(cell.x, cell.y), fill=cell.getColor())
+
+        self.paint_cell_list(self.selected_cells, self._selected_color)
+        self.paint_cell_list(self.path_cells, self._path_color)
+
+    def paint_cell_list(self, cells: list[int], color: str) -> None:
+        for cell in cells:
+            self.itemconfigure(cell, fill=color)
+
+    # -------------------------------------------------
+    # fonctions pour passer des case-modele au case-vue
+
+    def coord_grid_to_pixel_pt(self, x: int, y: int) -> dict:
+        # x_center = self.winfo_width() / 2
+        # y_center = self.winfo_height() / 2
+        x_center = 0
+        y_center = 0
         width_size = (sqrt(3) * self.side_l) / 2
 
         x_coord = x_center + (2 * x * width_size) + (y * width_size)
@@ -39,7 +69,7 @@ class HexDraw(Canvas):
 
         return {"x": x_coord, "y": y_coord}
 
-    def __hex_from_center_pt(self, x, y) -> list:
+    def hex_from_center_pt(self, x, y) -> list:
         points = []
         for i in range(0, 6):
             angle_rad = pi / 3 * (i + .5)
@@ -48,18 +78,46 @@ class HexDraw(Canvas):
             points.extend([x_p, y_p])
         return points
 
-    def __tag_from_coord(self, x:int, y:int) -> str:
+    def tag_from_coord(self, x: int, y: int) -> str:
         return str(x) + self._tag_delimiter + str(y)
 
-    def __tag_to_coord(self, tags:str) -> dict:
+    def tag_to_coord(self, tags: str) -> dict:
         sep = tags.split(self._tag_delimiter)
         return {"x": int(sep[0]), "y": int(sep[1])}
 
-    def __lclick(self, evt):
+    def get_id_from_coord(self, x, y) -> int:
+        return int(self.find_withtag(self.tag_from_coord(x, y))[0])
+
+    def get_coord_from_id(self, id) -> dict:
+        return self.tag_to_coord(self.gettags(id)[0])
+
+    # --------------------------
+    # fonctions appeler au click
+
+    def l_click(self, evt):  # left click
         clicked = int(self.find_closest(evt.x, evt.y)[0])
-        self.itemconfigure(clicked, fill="#6666CD")
-        print(self.__tag_to_coord(self.gettags(clicked)[0]))
 
+        if clicked in self.selected_cells:
+            self.selected_cells.remove(clicked)
 
-    def __rclick(self, evt):
-        print("test r")
+        elif self.modele.get_cell_from_coord(**self.get_coord_from_id(clicked)).isWalkable():
+            if len(self.selected_cells) == 2:
+                self.selected_cells.pop(0)
+            self.selected_cells.append(clicked)
+
+        self.refresh()
+
+    def r_click(self, evt):  # right click
+        clicked = int(self.find_closest(evt.x, evt.y)[0])
+
+        cell = self.modele.get_cell_from_coord(**(self.tag_to_coord(self.gettags(clicked)[0])))
+        cell.ctype = cell.ctype.get_next_cell_type()
+
+        self.refresh()
+
+    def m_click(self, evt):  # middle click
+        clicked = int(self.find_closest(evt.x, evt.y)[0])
+
+        print(self.modele.get_cell_from_coord(**(self.tag_to_coord(self.gettags(clicked)[0]))))
+
+        self.resetColor()

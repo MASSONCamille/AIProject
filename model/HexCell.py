@@ -2,9 +2,21 @@ from enum import Enum
 
 
 class CellType(Enum):
-    NEUTRAL_G = {"id": 1, "color": "#E0E0EE", "speed_coef": 1, "walkable": True}
-    FLOOD_G = {"id": 2, "color": "#6666CD", "speed_coef": 0, "walkable": False}
-    GRASS_G = {"id": 3, "color": "#069869", "speed_coef": 0.5, "walkable": True}
+    NEUTRAL_G = {"id": 0, "color": "#E0E0EE", "speed_coef": 1, "walkable": True}
+    WALL_G = {"id": 1, "color": "#353739", "speed_coef": 0, "walkable": False}
+    GRASS_G = {"id": 2, "color": "#069869", "speed_coef": 0.5, "walkable": True}
+
+    @classmethod
+    def get_cell_type_by_id(cls, cell_type_id):
+        for cell_type in cls:
+            if cell_type.value["id"] == cell_type_id:
+                return cell_type
+        return None
+
+    def get_next_cell_type(self):
+        return CellType.get_cell_type_by_id(
+            (self.value["id"] + 1) % len(CellType)
+        )
 
 
 class HexCell:
