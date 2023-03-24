@@ -47,9 +47,8 @@ class HexGrid:
 
     def __str__(self) -> str:
         res = ""
-        for sc in self.celllist:
-            for c in sc:
-                res += "{c}\n".format(c=c)
+        for c in self.celllist:
+            res += "{c}\n".format(c=c)
         return res
 
     def get_cell_from_coord(self, x: int, y: int) -> HexCell:
