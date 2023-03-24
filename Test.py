@@ -1,10 +1,8 @@
 if __name__ == '__main__':
-    lst = [1,2]
-
+    lst = [1, 2]
     print(lst)
+    print()
 
-    lst.pop(0)
-    lst.append(3)
-
-    print(lst)
-
+    while len(lst) > 0:
+        lst.pop()
+        print(lst)

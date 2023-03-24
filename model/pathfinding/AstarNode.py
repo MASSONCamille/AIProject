@@ -34,9 +34,16 @@ class AstarNode:
     def getF(self) -> float:
         return self.h_funct() + self.g_funct()
 
-def get_best_node(lstNode: list[AstarNode]) -> AstarNode
+def get_best_node(lstNode: list[AstarNode]) -> AstarNode:
+    pass
 
 def get_path_Astar(grid: HexGrid, start: HexCell, objectif: HexCell) -> list[HexCell]:
     listOpen = []
     listClose = []
+
+    listOpen.append(AstarNode(start, objectif))
+
+    while len(listOpen) > 0:
+        pass  # TODO: AStar
+
 

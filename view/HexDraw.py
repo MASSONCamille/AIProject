@@ -50,7 +50,7 @@ class HexDraw(Canvas):
         self.paint_cell_list(self.selected_cells, self._selected_color)
         self.paint_cell_list(self.path_cells, self._path_color)
 
-        # test
+        # test TODO: delete
         if len(self.selected_cells) == 2:
             print(
                 self.modele.get_cell_from_coord(**self.get_coord_from_id(self.selected_cells[0])).get_dist(
@@ -132,7 +132,7 @@ class HexDraw(Canvas):
 
         self.resetColor()
 
-        # test neighbour
+        # test neighbour TODO: delete
         # self.path_cells = []
         # for i in self.modele.get_all_w_neighbours(**self.get_coord_from_id(clicked)):
         #     print(i)
