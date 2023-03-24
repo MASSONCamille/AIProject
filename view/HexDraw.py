@@ -9,7 +9,7 @@ from model.pathfinding.AstarNode import get_path_Astar
 
 class HexDraw(Canvas):
     _tag_delimiter = ";"
-    _selected_color = "#6666CD"
+    _selected_color = "green"
     _path_color = "#C64343"
 
     def __init__(self, master, modele: HexGrid, side_length=25, **kwargs) -> None:
@@ -46,7 +46,12 @@ class HexDraw(Canvas):
             self.is_init = True
 
         for cell in self.modele.celllist:
-            self.itemconfigure(self.get_id_from_coord(cell.x, cell.y), fill=cell.getColor())
+            self.itemconfigure(
+                self.get_id_from_coord(cell.x, cell.y),
+                fill=cell.getColor(),
+                outline='black',
+                width=1,
+            )
 
         self.path_cells = []
         if len(self.selected_cells) == 2:
@@ -55,15 +60,20 @@ class HexDraw(Canvas):
                 start=self.modele.get_cell_from_coord(**self.get_coord_from_id(self.selected_cells[0])),
                 objectif=self.modele.get_cell_from_coord(**self.get_coord_from_id(self.selected_cells[1])),
             )
-            for cell in celllist:
-                self.path_cells.append(self.get_id_from_coord(cell.x, cell.y))
+            if celllist is not None:
+                for cell in celllist:
+                    self.path_cells.append(self.get_id_from_coord(cell.x, cell.y))
 
-        self.paint_cell_list(self.path_cells, self._path_color)
-        self.paint_cell_list(self.selected_cells, self._selected_color)
+        self.paint_cell_list(self.path_cells, self._path_color, mode=1)
+        self.paint_cell_list(self.selected_cells, self._selected_color, mode=1)
 
-    def paint_cell_list(self, cells: list[int], color: str) -> None:
-        for cell in cells:
-            self.itemconfigure(cell, fill=color)
+    def paint_cell_list(self, cells: list[int], color: str, mode=0) -> None:
+        if mode == 0:
+            for cell in cells:
+                self.itemconfigure(cell, fill=color)
+        if mode == 1:
+            for cell in cells:
+                self.itemconfigure(cell, outline=color, width=2.5)
 
     # -------------------------------------------------
     # fonctions pour passer des case-modele au case-vue
@@ -133,12 +143,3 @@ class HexDraw(Canvas):
         print(self.modele.get_cell_from_coord(**(self.tag_to_coord(self.gettags(clicked)[0]))))
 
         self.resetColor()
-
-        # test neighbour TODO: delete
-        self.path_cells = []
-        for i in self.modele.get_all_w_neighbours(HexCell(**self.get_coord_from_id(clicked))):
-            print(i)
-            self.path_cells.append(self.get_id_from_coord(i.x, i.y))
-        print()
-
-        self.refresh()

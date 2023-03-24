@@ -60,22 +60,21 @@ def get_best_node(lstNode: list[AstarNode]) -> AstarNode:
             best = node
     return best
 
+
 def find_equivalent_node(node: AstarNode, lstnode: list[AstarNode]) -> AstarNode:
     for n in lstnode:
         if n == node:
             return n
     return None
 
+
 def get_path_Astar(grid: HexGrid, start: HexCell, objectif: HexCell) -> list[HexCell]:
     listOpen = []
     listClose = []
-
-
     listOpen.append(AstarNode(start, objectif))
 
     while len(listOpen) > 0:
         node = get_best_node(listOpen)
-
         if node.getH() == 0:
             print("trouver avec un cout de {f}".format(f=node.getF()))
             return node.get_cell_list()
@@ -94,5 +93,3 @@ def get_path_Astar(grid: HexGrid, start: HexCell, objectif: HexCell) -> list[Hex
                 else:
                     listOpen.append(son)
     return None
-
-
